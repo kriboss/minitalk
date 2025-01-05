@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:50 by kbossio           #+#    #+#             */
-/*   Updated: 2025/01/05 21:03:11 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/01/05 23:35:32 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,23 +53,17 @@ void	send_sig(int pid, char *str)
 	while (str[i])
 	{
 		j = 7;
-		while(j >= 0)
+		while (j >= 0)
 		{
 			if ((str[i] >> j) & 1)
 			{
-				if(kill(pid, SIGUSR1) == -1)
-				{
-					write(1, "Error", 5);
+				if (kill(pid, SIGUSR1) == -1)
 					exit (EXIT_FAILURE);
-				}
 			}
 			else
 			{
-				if(kill(pid, SIGUSR2) == -1)
-				{
-					write(1, "Error", 5);
+				if (kill(pid, SIGUSR2) == -1)
 					exit (EXIT_FAILURE);
-				}
 			}
 			usleep(100);
 			j--;
@@ -78,9 +72,9 @@ void	send_sig(int pid, char *str)
 	}
 }
 
-void get_sig(int signum)
+void	get_sig(int signum)
 {
-    if (signum == SIGUSR1)
+	if (signum == SIGUSR1)
 		write(1, "Message received\n", 17);
 	else
 	{
@@ -92,7 +86,6 @@ void get_sig(int signum)
 int	main(int argc, char *argv[])
 {
 	int	pid;
-	char str[] = "ciao";
 
 	if (argc != 3)
 	{
@@ -103,14 +96,14 @@ int	main(int argc, char *argv[])
 	pid = ft_atoi(argv[1]);
 	if (signal(SIGUSR1, get_sig) == SIG_ERR)
 	{
-        perror("Unable to catch SIGUSR1");
-        exit(EXIT_FAILURE);
-    }
-    if (signal(SIGUSR2, get_sig) == SIG_ERR)
+		perror("Unable to catch SIGUSR1");
+		exit(EXIT_FAILURE);
+	}
+	if (signal(SIGUSR2, get_sig) == SIG_ERR)
 	{
-        perror("Unable to catch SIGUSR2");
-        exit(EXIT_FAILURE);
-    }
+		perror("Unable to catch SIGUSR2");
+		exit(EXIT_FAILURE);
+	}
 	send_sig(pid, argv[2]);
 	while (1)
 		pause();
