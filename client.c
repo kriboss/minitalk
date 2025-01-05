@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:50 by kbossio           #+#    #+#             */
-/*   Updated: 2025/01/04 00:40:10 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/01/05 21:03:11 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	ft_atoi(const char *str)
 	return (num * segno);
 }
 
-int	send_sig(int pid, char *str)
+void	send_sig(int pid, char *str)
 {
 	int	i;
 	int	j;
@@ -52,15 +52,15 @@ int	send_sig(int pid, char *str)
 	i = 0;
 	while (str[i])
 	{
-		j = 0;
-		while(j < 8)
+		j = 7;
+		while(j >= 0)
 		{
 			if ((str[i] >> j) & 1)
 			{
 				if(kill(pid, SIGUSR1) == -1)
 				{
 					write(1, "Error", 5);
-					return (1);
+					exit (EXIT_FAILURE);
 				}
 			}
 			else
@@ -68,30 +68,51 @@ int	send_sig(int pid, char *str)
 				if(kill(pid, SIGUSR2) == -1)
 				{
 					write(1, "Error", 5);
-					return (1);
+					exit (EXIT_FAILURE);
 				}
 			}
-			usleep(100000);
-			j++;
+			usleep(100);
+			j--;
 		}
 		i++;
 	}
-	return (0);
+}
+
+void get_sig(int signum)
+{
+    if (signum == SIGUSR1)
+		write(1, "Message received\n", 17);
+	else
+	{
+		write(1, "Error\n", 6);
+		exit(EXIT_FAILURE);
+	}
 }
 
 int	main(int argc, char *argv[])
 {
 	int	pid;
-	sigset_t	signal;
 	char str[] = "ciao";
 
-	/*
-	sigemptyset(&signal);
-	sigaddset(&signal, SIGUSR1);
-	*/
+	if (argc != 3)
+	{
+		write(1, "Error", 5);
+		return (1);
+	}
 	printf("pid: %s", argv[1]);
 	pid = ft_atoi(argv[1]);
-	send_sig(pid, str);
-	write(1, "ciao", 4);
+	if (signal(SIGUSR1, get_sig) == SIG_ERR)
+	{
+        perror("Unable to catch SIGUSR1");
+        exit(EXIT_FAILURE);
+    }
+    if (signal(SIGUSR2, get_sig) == SIG_ERR)
+	{
+        perror("Unable to catch SIGUSR2");
+        exit(EXIT_FAILURE);
+    }
+	send_sig(pid, argv[2]);
+	while (1)
+		pause();
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:54 by kbossio           #+#    #+#             */
-/*   Updated: 2025/01/04 01:52:23 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/01/05 20:48:15 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,44 +57,54 @@ char	*ft_itoa(int n)
 	return (result);
 }
 
-unsigned char	c = 0;
-int				bit_count = 0;
+unsigned short tot = 0;
 
-void	get_sig(int signum)
-{	
-    c = c << 1;
-    if (signum == SIGUSR1)
-        c = c | 1;
-    else if (signum == SIGUSR2)
-        c = c | 0;
-    bit_count++;
-    if (bit_count == 8)
-    {
-        write(1, &c, 1);
-        c = 0;
-        bit_count = 0;
-    }
+void get_sig(int signum, siginfo_t *info, void *context)
+{
+    unsigned char bit;
+	unsigned char c;
+	(void)context;
+
+	c = tot & 0xFF;
+	bit = tot >> 8;
+	c <<= 1;
+	if (signum == SIGUSR1)
+		c |= 1;
+	bit++;
+	if (bit == 8)
+	{
+		write(1, &c, 1);
+		c = 0;
+		bit = 0;
+		kill(info->si_pid, SIGUSR1);
+	}
+	tot = (bit << 8) | c;
 }
 
 int	main(void)
 {
 	pid_t	pid;
+	struct sigaction sa;
 	char	*str_pid;
-	int	i;
+
+	sa.sa_sigaction = get_sig;
+	sa.sa_flags = SA_SIGINFO;
 	
-	if (signal(SIGUSR1, get_sig) == SIG_ERR) {
+	if (sigaction(SIGUSR1, &sa, NULL) == -1)
+	{
         perror("Unable to catch SIGUSR1");
-        return (1);
+        exit(EXIT_FAILURE);
     }
-    if (signal(SIGUSR2, get_sig) == SIG_ERR) {
+    if (sigaction(SIGUSR2, &sa, NULL) == -1)
+	{
         perror("Unable to catch SIGUSR2");
-        return (1);
+        exit(EXIT_FAILURE);
     }
-	i = 0;
 	pid = getpid();
 	str_pid = ft_itoa(pid);
 	write(1, str_pid, sizeof(str_pid));
 	write(1, "\n", 1);
+	free(str_pid);
 	while (1)
 		pause();
 	return (0);
