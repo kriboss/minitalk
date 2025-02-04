@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:54 by kbossio           #+#    #+#             */
-/*   Updated: 2025/02/04 21:48:38 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/02/04 21:40:34 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ void	get_sig(int signum, siginfo_t *info, void *context)
 	unsigned char	c;
 
 	(void)context;
-	(void)info;
 	c = g_tot & 0xFF;
 	bit = g_tot >> 8;
 	c <<= 1;
@@ -74,10 +73,14 @@ void	get_sig(int signum, siginfo_t *info, void *context)
 	if (bit == 8)
 	{
 		if (c == 0)
+		{
+			kill(info->si_pid, SIGUSR2);
 			exit(EXIT_SUCCESS);
+		}
 		write(1, &c, 1);
 		c = 0;
 		bit = 0;
+		kill(info->si_pid, SIGUSR1);
 	}
 	g_tot = (bit << 8) | c;
 }

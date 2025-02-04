@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:50 by kbossio           #+#    #+#             */
-/*   Updated: 2025/02/04 22:44:51 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/02/04 22:50:07 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,16 @@ void	send_sig(int pid, char *str)
 	send_fin(pid);
 }
 
+void	get_sig(int signum)
+{
+	if (signum == SIGUSR1)
+		write(1, "Message received\n", 17);
+	else if (signum == SIGUSR2)
+	{
+		write(1, "End of message recieved\n", 24);
+		exit(EXIT_FAILURE);
+	}
+}
 
 int	main(int argc, char *argv[])
 {
@@ -97,6 +107,16 @@ int	main(int argc, char *argv[])
 		return (1);
 	}
 	pid = ft_atoi(argv[1]);
+	if (signal(SIGUSR1, get_sig) == SIG_ERR)
+	{
+		write(1, "Unable to catch SIGUSR1", 24);
+		exit(EXIT_FAILURE);
+	}
+	if (signal(SIGUSR2, get_sig) == SIG_ERR)
+	{
+		write(1, "Unable to catch SIGUSR2", 24);
+		exit(EXIT_FAILURE);
+	}
 	send_sig(pid, argv[2]);
 	while (1)
 		pause();
