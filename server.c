@@ -6,13 +6,14 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:54 by kbossio           #+#    #+#             */
-/*   Updated: 2025/02/04 21:48:38 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/02/20 19:12:18 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 
 static size_t	count_digits(int n)
 {
@@ -84,10 +85,11 @@ void	get_sig(int signum, siginfo_t *info, void *context)
 
 int	main(void)
 {
-	pid_t				pid;
+	int				pid;
 	struct sigaction	sa;
 	char				*str_pid;
 
+	sa = (struct sigaction){0};
 	sa.sa_sigaction = get_sig;
 	sa.sa_flags = SA_SIGINFO;
 	if (sigaction(SIGUSR1, &sa, NULL) == -1)
