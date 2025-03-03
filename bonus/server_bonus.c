@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:54 by kbossio           #+#    #+#             */
-/*   Updated: 2025/02/20 19:14:42 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/03/03 12:44:22 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,10 @@ void	get_sig(int signum, siginfo_t *info, void *context)
 	if (bit == 8)
 	{
 		if (c == 0)
-		{
 			kill(info->si_pid, SIGUSR2);
-			exit(EXIT_SUCCESS);
-		}
 		write(1, &c, 1);
 		c = 0;
 		bit = 0;
-		kill(info->si_pid, SIGUSR1);
 	}
 	g_tot = (bit << 8) | c;
 }
@@ -94,6 +90,12 @@ int	main(void)
 	sa = (struct sigaction){0};
 	sa.sa_sigaction = get_sig;
 	sa.sa_flags = SA_SIGINFO;
+	pid = getpid();
+	str_pid = ft_itoa(pid);
+	write(1, str_pid, sizeof(str_pid));
+	write(1, "\n", 1);
+	free(str_pid);
+	while (1)
 	if (sigaction(SIGUSR1, &sa, NULL) == -1)
 	{
 		write(1, "Unable to catch SIGUSR1", 24);
@@ -104,12 +106,5 @@ int	main(void)
 		write(1, "Unable to catch SIGUSR2", 24);
 		exit(EXIT_FAILURE);
 	}
-	pid = getpid();
-	str_pid = ft_itoa(pid);
-	write(1, str_pid, sizeof(str_pid));
-	write(1, "\n", 1);
-	free(str_pid);
-	while (1)
-		pause();
 	return (0);
 }

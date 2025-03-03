@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:50 by kbossio           #+#    #+#             */
-/*   Updated: 2025/02/04 22:50:07 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/03/02 16:38:16 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,12 +88,10 @@ void	send_sig(int pid, char *str)
 
 void	get_sig(int signum)
 {
-	if (signum == SIGUSR1)
-		write(1, "Message received\n", 17);
-	else if (signum == SIGUSR2)
+	if (signum == SIGUSR2)
 	{
 		write(1, "End of message recieved\n", 24);
-		exit(EXIT_FAILURE);
+		exit(EXIT_SUCCESS);
 	}
 }
 

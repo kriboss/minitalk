@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:54 by kbossio           #+#    #+#             */
-/*   Updated: 2025/02/20 19:12:18 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/03/03 12:37:43 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,29 +85,30 @@ void	get_sig(int signum, siginfo_t *info, void *context)
 
 int	main(void)
 {
-	int				pid;
+	int					pid;
 	struct sigaction	sa;
 	char				*str_pid;
 
 	sa = (struct sigaction){0};
 	sa.sa_sigaction = get_sig;
 	sa.sa_flags = SA_SIGINFO;
-	if (sigaction(SIGUSR1, &sa, NULL) == -1)
-	{
-		write(1, "Unable to catch SIGUSR1", 24);
-		exit(EXIT_FAILURE);
-	}
-	if (sigaction(SIGUSR2, &sa, NULL) == -1)
-	{
-		write(1, "Unable to catch SIGUSR2", 24);
-		exit(EXIT_FAILURE);
-	}
 	pid = getpid();
 	str_pid = ft_itoa(pid);
 	write(1, str_pid, sizeof(str_pid));
 	write(1, "\n", 1);
 	free(str_pid);
 	while (1)
-		pause();
+	{
+		if (sigaction(SIGUSR1, &sa, NULL) == -1)
+		{
+			write(1, "Unable to catch SIGUSR1", 24);
+			exit(EXIT_FAILURE);
+		}
+		if (sigaction(SIGUSR2, &sa, NULL) == -1)
+		{
+			write(1, "Unable to catch SIGUSR2", 24);
+			exit(EXIT_FAILURE);
+		}
+	}
 	return (0);
 }
