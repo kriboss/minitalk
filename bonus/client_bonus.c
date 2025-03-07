@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:50 by kbossio           #+#    #+#             */
-/*   Updated: 2025/03/02 16:38:16 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/03/07 12:08:59 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ void	get_sig(int signum)
 		write(1, "End of message recieved\n", 24);
 		exit(EXIT_SUCCESS);
 	}
+	else
+		write(1, "Error\n", 6);
 }
 
 int	main(int argc, char *argv[])
@@ -101,20 +103,16 @@ int	main(int argc, char *argv[])
 
 	if (argc != 3 || ft_atoi(argv[1]) <= 0)
 	{
-		write(1, "Error", 5);
+		write(2, "Error\n", 6);
 		return (1);
 	}
+	if (signal(SIGUSR1, get_sig) == SIG_ERR
+		|| signal(SIGUSR2, get_sig) == SIG_ERR)
+	{
+		write(2, "Error\n", 6);
+		exit(EXIT_FAILURE);
+	}
 	pid = ft_atoi(argv[1]);
-	if (signal(SIGUSR1, get_sig) == SIG_ERR)
-	{
-		write(1, "Unable to catch SIGUSR1", 24);
-		exit(EXIT_FAILURE);
-	}
-	if (signal(SIGUSR2, get_sig) == SIG_ERR)
-	{
-		write(1, "Unable to catch SIGUSR2", 24);
-		exit(EXIT_FAILURE);
-	}
 	send_sig(pid, argv[2]);
 	while (1)
 		pause();

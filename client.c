@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:50 by kbossio           #+#    #+#             */
-/*   Updated: 2025/03/03 12:35:18 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/03/07 11:24:48 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	main(int argc, char *argv[])
 
 	if (argc != 3 || ft_atoi(argv[1]) <= 0)
 	{
-		write(1, "Error\n", 6);
+		write(2, "Error\n", 6);
 		return (1);
 	}
 	pid = ft_atoi(argv[1]);
