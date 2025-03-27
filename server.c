@@ -6,14 +6,13 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:54 by kbossio           #+#    #+#             */
-/*   Updated: 2025/03/07 11:23:50 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/03/27 11:44:32 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <string.h>
 
 static size_t	count_digits(int n)
 {
@@ -57,17 +56,12 @@ char	*ft_itoa(int n)
 	return (result);
 }
 
-unsigned short	g_tot = 0;
-
 void	get_sig(int signum, siginfo_t *info, void *context)
 {
-	unsigned char	bit;
-	unsigned char	c;
+	static int	bit = 0;
+	static char	c = 0;
 
 	(void)context;
-	(void)info;
-	c = g_tot & 0xFF;
-	bit = g_tot >> 8;
 	c <<= 1;
 	if (signum == SIGUSR1)
 		c |= 1;
@@ -75,17 +69,16 @@ void	get_sig(int signum, siginfo_t *info, void *context)
 	if (bit == 8)
 	{
 		if (c == 0)
-			exit(EXIT_SUCCESS);
+			kill(info->si_pid, SIGUSR2);
 		write(1, &c, 1);
 		c = 0;
 		bit = 0;
 	}
-	g_tot = (bit << 8) | c;
 }
 
 int	main(void)
 {
-	int					pid;
+	pid_t				pid;
 	struct sigaction	sa;
 	char				*str_pid;
 	int					i;
@@ -100,14 +93,10 @@ int	main(void)
 		write(1, &str_pid[i++], 1);
 	write(1, "\n", 1);
 	free(str_pid);
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 	while (1)
 	{
-		if (sigaction(SIGUSR1, &sa, NULL) == -1
-			|| sigaction(SIGUSR2, &sa, NULL) == -1)
-		{
-			write(2, "Error\n", 6);
-			exit(EXIT_FAILURE);
-		}
 	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:50 by kbossio           #+#    #+#             */
-/*   Updated: 2025/03/07 12:08:59 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/03/27 11:41:59 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,12 +106,8 @@ int	main(int argc, char *argv[])
 		write(2, "Error\n", 6);
 		return (1);
 	}
-	if (signal(SIGUSR1, get_sig) == SIG_ERR
-		|| signal(SIGUSR2, get_sig) == SIG_ERR)
-	{
-		write(2, "Error\n", 6);
-		exit(EXIT_FAILURE);
-	}
+	signal(SIGUSR1, get_sig);
+	signal(SIGUSR2, get_sig);
 	pid = ft_atoi(argv[1]);
 	send_sig(pid, argv[2]);
 	while (1)

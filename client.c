@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:30:50 by kbossio           #+#    #+#             */
-/*   Updated: 2025/03/07 11:24:48 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/03/27 11:44:38 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,20 @@ int	ft_atoi(const char *str)
 	return (num * segno);
 }
 
+void	send_fin(int pid)
+{
+	int	i;
+
+	i = 7;
+	while (i >= 0)
+	{
+		if (kill(pid, SIGUSR2) == -1)
+			exit (EXIT_FAILURE);
+		usleep(100);
+		i--;
+	}
+}
+
 void	send_sig(int pid, char *str)
 {
 	int	i;
@@ -69,6 +83,17 @@ void	send_sig(int pid, char *str)
 		}
 		i++;
 	}
+	send_fin(pid);
+}
+
+void	get_sig(int signum)
+{
+	if (signum == SIGUSR2)
+	{
+		exit(EXIT_SUCCESS);
+	}
+	else
+		write(1, "Error\n", 6);
 }
 
 int	main(int argc, char *argv[])
@@ -80,7 +105,11 @@ int	main(int argc, char *argv[])
 		write(2, "Error\n", 6);
 		return (1);
 	}
+	signal(SIGUSR1, get_sig);
+	signal(SIGUSR2, get_sig);
 	pid = ft_atoi(argv[1]);
 	send_sig(pid, argv[2]);
+	while (1)
+		pause();
 	return (0);
 }

@@ -6,7 +6,7 @@
 #    By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/05 23:17:29 by kbossio           #+#    #+#              #
-#    Updated: 2025/02/27 12:03:00 by kbossio          ###   ########.fr        #
+#    Updated: 2025/03/27 13:29:55 by kbossio          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,4 +43,4 @@ bonus: $(BOBJS)
 	$(CC) bonus/client_bonus.o -o client
 	$(CC) bonus/server_bonus.o -o server
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus
