@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = minitalk
-CC = gcc -Wall -Wextra -Werror
+CC = cc -Wall -Wextra -Werror
 SRCS = client.c server.c
 OBJS = $(SRCS:.c=.o)
 BSRCS = bonus/client_bonus.c bonus/server_bonus.c
@@ -31,16 +31,20 @@ server: server.o
 	$(CC) server.o -o server
 
 clean:
-	rm -f $(OBJS)
-	rm -f $(BOBJS)
+	rm -f $(OBJS) $(BOBJS)
 
 fclean: clean
-	rm -f client server
+	rm -f client server client_bonus server_bonus
 
 re: fclean all
 
-bonus: $(BOBJS)
-	$(CC) bonus/client_bonus.o -o client
-	$(CC) bonus/server_bonus.o -o server
+bonus: client_bonus server_bonus
+
+client_bonus: $(BOBJS)
+	$(CC) bonus/client_bonus.o -o client_bonus
+
+server_bonus: $(BOBJS)
+	$(CC) bonus/server_bonus.o -o server_bonus
 
 .PHONY: all clean fclean re bonus
+
